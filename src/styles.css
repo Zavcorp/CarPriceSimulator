@@ -1,1 +1,37 @@
 /* You can add global styles to this file, and also import other style files */
+/* PrimeNG estilos base */
+@import "primeicons/primeicons.css";
+
+/* Tailwind CSS v4 */
+@import "tailwindcss";
+
+@theme {
+  --color-brand-900: #1a1a2e;
+  --color-brand-700: #2d2d5e;
+  --color-brand-500: #4a4a8f;
+}
+
+/* Variables globales de la marca */
+:root {
+  --brand-900: #1a1a2e;
+  --brand-700: #2d2d5e;
+  --brand-500: #4a4a8f;
+  --brand-accent: #4f8ef7;
+}
+
+/* Override suave de PrimeNG para alinear con la marca */
+.p-datatable .p-datatable-thead > tr > th {
+  background: var(--brand-900) !important;
+  color: white !important;
+  font-weight: 500;
+}
+
+.p-button.p-button-primary {
+  background: var(--brand-900) !important;
+  border-color: var(--brand-900) !important;
+}
+
+.p-dialog .p-dialog-header {
+  background: var(--brand-900) !important;
+  color: white !important;
+}

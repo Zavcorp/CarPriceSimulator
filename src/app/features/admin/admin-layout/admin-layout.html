@@ -1,0 +1,52 @@
+<div class="flex min-h-screen">
+  <!-- Sidebar -->
+  <aside class="w-60 flex-shrink-0 flex flex-col py-8 px-4"
+         style="background: var(--surface-1); border-right: 1px solid var(--border-color)">
+
+    <p class="text-xs uppercase tracking-widest px-3 mb-4" style="color: var(--text-muted)">
+      Administración
+    </p>
+
+    <nav class="flex flex-col gap-1">
+      <a routerLink="upload" routerLinkActive="active-nav"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all hover:bg-white/5"
+         style="color: var(--text-primary)">
+        <i class="pi pi-upload text-sm"></i>
+        Cargar Vehículos
+      </a>
+      <a routerLink="history" routerLinkActive="active-nav"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all hover:bg-white/5"
+         style="color: var(--text-primary)">
+        <i class="pi pi-history text-sm"></i>
+        Historial de Cargas
+      </a>
+    </nav>
+
+    <div class="mt-auto">
+      <div class="px-3 py-3 rounded-xl mb-3"
+           style="background: var(--surface-2)">
+        <p class="text-xs font-600" style="color: var(--text-primary)">{{ auth.user()?.email }}</p>
+        <p class="text-xs mt-0.5" style="color: var(--text-muted)">Administrador</p>
+      </div>
+      <button (click)="auth.signOut()"
+              class="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm transition-all hover:bg-white/5"
+              style="color: var(--text-muted)">
+        <i class="pi pi-sign-out text-sm"></i>
+        Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- Content -->
+  <main class="flex-1 p-8 overflow-auto">
+    <router-outlet />
+  </main>
+</div>
+
+<style>
+  .active-nav {
+    background: rgba(59,91,219,0.15) !important;
+    color: var(--brand-accent) !important;
+    border-left: 2px solid var(--brand-primary);
+  }
+</style>

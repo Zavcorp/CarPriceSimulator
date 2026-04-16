@@ -1,0 +1,72 @@
+<div class="max-w-4xl">
+  <div class="mb-8">
+    <h2 class="font-display text-3xl font-700 mb-2" style="color: var(--text-primary)">
+      Historial de Cargas
+    </h2>
+    <p class="text-sm" style="color: var(--text-muted)">
+      Registro de todas las importaciones realizadas.
+    </p>
+  </div>
+
+  @if (loading()) {
+    <div class="flex flex-col gap-3">
+      @for (_ of [1,2,3]; track _) {
+        <p-skeleton height="56px" styleClass="rounded-xl" />
+      }
+    </div>
+  } @else if (history().length === 0) {
+    <div class="text-center py-16">
+      <i class="pi pi-inbox text-4xl mb-4 block" style="color: var(--text-muted); opacity: 0.3"></i>
+      <p style="color: var(--text-muted)">No hay cargas registradas aún.</p>
+    </div>
+  } @else {
+    <div class="rounded-xl overflow-hidden" style="border: 1px solid var(--border-color)">
+      <table class="w-full text-sm">
+        <thead style="background: var(--surface-2)">
+          <tr>
+            @for (col of ['Archivo','Vehículos','Estado','Fecha']; track col) {
+              <th class="text-left px-5 py-3.5 text-xs uppercase tracking-wider"
+                  style="color: var(--text-muted); border-bottom: 1px solid var(--border-color)">
+                {{ col }}
+              </th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of history(); track item.id) {
+            <tr style="border-bottom: 1px solid var(--border-color)">
+              <td class="px-5 py-4">
+                <div class="flex items-center gap-2">
+                  <i class="pi pi-file-excel text-sm" style="color: #4ade80"></i>
+                  <span style="color: var(--text-primary)">{{ item.filename }}</span>
+                </div>
+              </td>
+              <td class="px-5 py-4">
+                <span class="font-600" style="color: var(--brand-accent)">
+                  {{ item.vehicles_count }}
+                </span>
+              </td>
+              <td class="px-5 py-4">
+                @if (item.status === 'success') {
+                  <span class="text-xs px-2.5 py-1 rounded-full font-600"
+                        style="background: rgba(74,222,128,0.12); color: #4ade80">
+                    ✓ Exitoso
+                  </span>
+                } @else {
+                  <span class="text-xs px-2.5 py-1 rounded-full font-600"
+                        style="background: rgba(239,68,68,0.12); color: #f87171"
+                        [title]="item.error_message || ''">
+                    ✗ Error
+                  </span>
+                }
+              </td>
+              <td class="px-5 py-4 text-xs" style="color: var(--text-muted)">
+                {{ formatDate(item.uploaded_at) }}
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

@@ -1,0 +1,73 @@
+<p-dialog
+  [visible]="visible"
+  (visibleChange)="visibleChange.emit($event)"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ width: '400px' }"
+  header="Acceso Administrador">
+
+  <div class="p-6">
+    <!-- Error message -->
+    @if (errorMessage()) {
+      <div class="mb-4 p-3 rounded-lg text-sm"
+           style="background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5">
+        <i class="pi pi-exclamation-triangle mr-2"></i>{{ errorMessage() }}
+      </div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-4">
+      <!-- Email -->
+      <div class="flex flex-col gap-1.5">
+        <label class="text-sm font-500" style="color: var(--text-muted)">Email</label>
+        <input pInputText
+               formControlName="email"
+               type="email"
+               placeholder="admin@ejemplo.com"
+               class="w-full" />
+        @if (emailControl.invalid && emailControl.touched) {
+          <span class="text-xs" style="color: #f87171">
+            @if (emailControl.errors?.['required']) { El email es requerido }
+            @else { Ingresa un email válido }
+          </span>
+        }
+      </div>
+
+      <!-- Password -->
+      <div class="flex flex-col gap-1.5">
+        <label class="text-sm font-500" style="color: var(--text-muted)">Contraseña</label>
+        <p-password
+          formControlName="password"
+          [feedback]="false"
+          [toggleMask]="true"
+          placeholder="••••••••"
+          styleClass="w-full"
+          inputStyleClass="w-full" />
+        @if (passwordControl.invalid && passwordControl.touched) {
+          <span class="text-xs" style="color: #f87171">
+            Mínimo 6 caracteres
+          </span>
+        }
+      </div>
+
+      <!-- Actions -->
+      <div class="flex gap-3 pt-2">
+        <button type="button" (click)="close()"
+                class="flex-1 py-2.5 rounded-lg text-sm transition-all hover:bg-white/5"
+                style="color: var(--text-muted); border: 1px solid var(--border-color)">
+          Cancelar
+        </button>
+        <button type="submit"
+                [disabled]="loading()"
+                class="flex-1 py-2.5 rounded-lg text-sm font-600 transition-all disabled:opacity-50"
+                style="background: var(--brand-primary); color: white;">
+          @if (loading()) {
+            <i class="pi pi-spin pi-spinner mr-2"></i>Ingresando...
+          } @else {
+            Ingresar
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</p-dialog>

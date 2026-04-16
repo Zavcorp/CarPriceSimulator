@@ -1,0 +1,172 @@
+<p-toast />
+
+<p-dialog
+  [visible]="visible"
+  (visibleChange)="visibleChange.emit($event)"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ width: '680px', maxWidth: '95vw' }"
+  [header]="vehicle?.name || 'Simulador'">
+
+  @if (vehicle) {
+    <div class="p-4 flex flex-col gap-6">
+
+      <!-- Header de tipo de precio -->
+      <div class="flex items-center gap-3 p-3 rounded-xl"
+           style="background: rgba(59,91,219,0.12); border: 1px solid rgba(59,91,219,0.2)">
+        <i class="pi" [ngClass]="priceType === 'employee' ? 'pi-id-card' : 'pi-users'"
+           style="color: var(--brand-accent)"></i>
+        <div>
+          <p class="text-sm font-600" style="color: var(--brand-accent)">
+            Precio {{ priceTypeLabel }}
+          </p>
+          <p class="text-xs" style="color: var(--text-muted)">
+            Descuento del {{ typeDiscountPct }}% aplicado sobre precio base
+          </p>
+        </div>
+        <div class="ml-auto text-right">
+          <p class="font-display font-700 text-xl" style="color: var(--text-primary)">
+            {{ typeDiscountedPrice | currency:'MXN':'symbol':'1.0-0' }}
+          </p>
+          <p class="text-xs line-through" style="color: var(--text-muted)">
+            {{ vehicle.base_price | currency:'MXN':'symbol':'1.0-0' }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Cupón de descuento -->
+      <div>
+        <label class="text-sm font-500 block mb-2" style="color: var(--text-muted)">
+          Código de descuento (opcional)
+        </label>
+
+        @if (!couponApplied()) {
+          <div class="flex gap-2">
+            <input pInputText
+                   formControlName="couponCode"
+                   [formGroup]="form"
+                   placeholder="DESC10 / DESC15"
+                   class="flex-1 uppercase" />
+            <button (click)="validateCoupon()"
+                    [disabled]="validatingCoupon() || !form.value.couponCode"
+                    class="px-4 py-2 rounded-lg text-sm font-600 transition-all disabled:opacity-50"
+                    style="background: var(--surface-2); border: 1px solid var(--border-color); color: var(--text-primary)">
+              @if (validatingCoupon()) {
+                <i class="pi pi-spin pi-spinner"></i>
+              } @else {
+                Aplicar
+              }
+            </button>
+          </div>
+          @if (couponError()) {
+            <p class="text-xs mt-1.5" style="color: #f87171">{{ couponError() }}</p>
+          }
+        } @else {
+          <div class="flex items-center justify-between p-3 rounded-xl"
+               style="background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.25)">
+            <div class="flex items-center gap-2">
+              <i class="pi pi-tag" style="color: #4ade80"></i>
+              <span class="text-sm font-600" style="color: #4ade80">
+                {{ couponCode() }} — {{ couponDiscount() }}% adicional
+              </span>
+            </div>
+            <button (click)="removeCoupon()"
+                    class="text-xs px-2 py-1 rounded hover:bg-white/5 transition-all"
+                    style="color: var(--text-muted)">
+              <i class="pi pi-times"></i>
+            </button>
+          </div>
+        }
+      </div>
+
+      <!-- Selección de mensualidades -->
+      <div>
+        <label class="text-sm font-500 block mb-2" style="color: var(--text-muted)">
+          Plazo de financiamiento
+        </label>
+        <p-select
+          [formGroup]="form"
+          formControlName="months"
+          [options]="monthOptions"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Selecciona plazo"
+          styleClass="w-full" />
+      </div>
+
+      <!-- Botón simular -->
+      <button (click)="simulate()"
+              class="w-full py-3 rounded-xl font-display font-700 text-base transition-all hover:opacity-90"
+              style="background: var(--brand-primary); color: white;">
+        <i class="pi pi-calculator mr-2"></i>Simular precio
+      </button>
+
+      <!-- Resultado -->
+      @if (simulationResult(); as result) {
+        <div class="rounded-xl overflow-hidden"
+             style="border: 1px solid var(--border-color)">
+
+          <!-- Resumen -->
+          <div class="p-4 grid grid-cols-2 gap-3"
+               style="background: var(--surface-2)">
+            <div>
+              <p class="text-xs uppercase tracking-wider mb-1" style="color: var(--text-muted)">Precio final</p>
+              <p class="font-display font-800 text-2xl" style="color: #4ade80">
+                {{ result.finalPrice | currency:'MXN':'symbol':'1.0-0' }}
+              </p>
+            </div>
+            <div>
+              <p class="text-xs uppercase tracking-wider mb-1" style="color: var(--text-muted)">Mensualidad</p>
+              <p class="font-display font-800 text-2xl" style="color: var(--brand-accent)">
+                {{ result.monthlyPayment | currency:'MXN':'symbol':'1.2-2' }}
+              </p>
+            </div>
+            <div>
+              <p class="text-xs mb-0.5" style="color: var(--text-muted)">Desc. {{ result.priceType }}</p>
+              <p class="text-sm font-600" style="color: var(--text-primary)">-{{ result.typeDiscount }}%</p>
+            </div>
+            @if (result.couponCode) {
+              <div>
+                <p class="text-xs mb-0.5" style="color: var(--text-muted)">Cupón {{ result.couponCode }}</p>
+                <p class="text-sm font-600" style="color: var(--text-primary)">-{{ result.couponDiscount }}%</p>
+              </div>
+            }
+          </div>
+
+          <!-- Tabla de desglose (máx 6 filas visibles) -->
+          <div style="max-height: 240px; overflow-y: auto;">
+            <p-table [value]="monthlyRows()" [scrollable]="false" styleClass="p-datatable-sm">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>Mes</th>
+                  <th>Cuota</th>
+                  <th>Saldo restante</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-row>
+                <tr>
+                  <td>{{ row.month }}</td>
+                  <td>{{ row.payment | currency:'MXN':'symbol':'1.2-2' }}</td>
+                  <td>{{ row.remaining | currency:'MXN':'symbol':'1.0-0' }}</td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+
+        <!-- Descargar -->
+        <button (click)="downloadExcel()"
+                [disabled]="loading()"
+                class="w-full py-2.5 rounded-xl text-sm font-600 flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+                style="background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.25); color: #4ade80">
+          @if (loading()) {
+            <i class="pi pi-spin pi-spinner"></i> Generando...
+          } @else {
+            <i class="pi pi-download"></i> Descargar Excel
+          }
+        </button>
+      }
+    </div>
+  }
+</p-dialog>

@@ -1,0 +1,95 @@
+<p-toast />
+
+<div class="max-w-4xl">
+  <div class="mb-8">
+    <h2 class="font-display text-3xl font-700 mb-2" style="color: var(--text-primary)">
+      Carga de Vehículos
+    </h2>
+    <p class="text-sm" style="color: var(--text-muted)">
+      Importa el catálogo de vehículos desde un archivo Excel.
+    </p>
+  </div>
+
+  <!-- Descarga de plantilla -->
+  <div class="flex items-center gap-4 p-4 rounded-xl mb-6"
+       style="background: var(--surface-2); border: 1px solid var(--border-color)">
+    <i class="pi pi-file-excel text-2xl" style="color: #4ade80"></i>
+    <div class="flex-1">
+      <p class="text-sm font-600" style="color: var(--text-primary)">Plantilla Excel</p>
+      <p class="text-xs" style="color: var(--text-muted)">
+        Descarga la plantilla con el formato requerido: categoria, nombre, imagen_url, año, precio_base, desc_empleado_%, desc_referido_%
+      </p>
+    </div>
+    <button (click)="downloadTemplate()"
+            class="px-4 py-2 rounded-lg text-sm font-600 transition-all"
+            style="background: rgba(74,222,128,0.12); border: 1px solid rgba(74,222,128,0.25); color: #4ade80">
+      <i class="pi pi-download mr-2"></i>Descargar plantilla
+    </button>
+  </div>
+
+  <!-- Upload area -->
+  <p-fileUpload
+    mode="basic"
+    accept=".xlsx,.xls"
+    [auto]="true"
+    chooseLabel="Seleccionar Excel"
+    (onSelect)="onFileSelect($event)"
+    styleClass="mb-6" />
+
+  <!-- Preview -->
+  @if (previewData().length > 0) {
+    <div class="rounded-xl overflow-hidden" style="border: 1px solid var(--border-color)">
+      <div class="px-5 py-4 flex items-center justify-between"
+           style="background: var(--surface-2)">
+        <div>
+          <p class="font-display font-700" style="color: var(--text-primary)">
+            Vista previa — {{ previewData().length }} vehículos
+          </p>
+          <p class="text-xs mt-0.5" style="color: var(--text-muted)">
+            {{ selectedFile()?.name }}
+          </p>
+        </div>
+        <button (click)="confirmUpload()"
+                [disabled]="loading()"
+                class="px-5 py-2.5 rounded-lg text-sm font-700 transition-all disabled:opacity-50 flex items-center gap-2"
+                style="background: var(--brand-primary); color: white;">
+          @if (loading()) {
+            <i class="pi pi-spin pi-spinner"></i>
+          } @else {
+            <i class="pi pi-cloud-upload"></i>
+          }
+          Confirmar carga
+        </button>
+      </div>
+
+      <div style="overflow-x: auto">
+        <table class="w-full text-sm">
+          <thead style="background: var(--surface-2)">
+            <tr>
+              @for (col of ['Categoría','Nombre','Año','Precio Base','Desc. Emp.','Desc. Ref.']; track col) {
+                <th class="text-left px-4 py-3 text-xs uppercase tracking-wider"
+                    style="color: var(--text-muted); border-bottom: 1px solid var(--border-color)">
+                  {{ col }}
+                </th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (v of previewData(); track v.name) {
+              <tr style="border-bottom: 1px solid var(--border-color)">
+                <td class="px-4 py-3" style="color: var(--text-muted)">{{ v.category }}</td>
+                <td class="px-4 py-3 font-600" style="color: var(--text-primary)">{{ v.name }}</td>
+                <td class="px-4 py-3" style="color: var(--text-muted)">{{ v.year }}</td>
+                <td class="px-4 py-3 font-600" style="color: #4ade80">
+                  {{ v.base_price | currency:'MXN':'symbol':'1.0-0' }}
+                </td>
+                <td class="px-4 py-3" style="color: var(--brand-accent)">{{ v.employee_discount }}%</td>
+                <td class="px-4 py-3" style="color: #a78bfa">{{ v.referral_discount }}%</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</div>

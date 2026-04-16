@@ -1,0 +1,134 @@
+<div class="max-w-7xl mx-auto px-6 py-12">
+
+  <!-- Header -->
+  <div class="mb-10">
+    <p class="text-sm font-500 mb-2 uppercase tracking-widest"
+       style="color: var(--brand-accent)">Simulador de Precios</p>
+    <h1 class="font-display text-4xl font-800 mb-3" style="color: var(--text-primary)">
+      Catálogo de Vehículos
+    </h1>
+    <p class="text-base max-w-xl" style="color: var(--text-muted)">
+      Explora nuestros modelos y simula tu precio con descuentos exclusivos para empleados y referidos.
+    </p>
+  </div>
+
+  <!-- Error -->
+  @if (errorMessage()) {
+    <div class="p-4 rounded-xl mb-6 text-sm"
+         style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2); color: #fca5a5">
+      <i class="pi pi-exclamation-circle mr-2"></i>{{ errorMessage() }}
+    </div>
+  }
+
+  <!-- Grid de vehículos -->
+  @if (loading()) {
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      @for (_ of [1,2,3,4,5,6]; track _) {
+        <div class="rounded-2xl p-5 animate-pulse" style="background: var(--surface-1)">
+          <p-skeleton height="180px" styleClass="mb-4 rounded-xl" />
+          <p-skeleton width="60%" height="1.2rem" styleClass="mb-2" />
+          <p-skeleton width="40%" height="1rem" />
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      @for (vehicle of vehicles(); track vehicle.id) {
+        <div class="rounded-2xl overflow-hidden transition-all duration-300 hover:translate-y-[-4px]"
+             style="background: var(--surface-1); border: 1px solid var(--border-color); box-shadow: var(--card-shadow)">
+
+          <!-- Imagen -->
+          <div class="relative h-48 overflow-hidden"
+               style="background: var(--surface-2)">
+            @if (vehicle.image_url) {
+              <img [src]="vehicle.image_url" [alt]="vehicle.name"
+                   class="w-full h-full object-cover" />
+            } @else {
+              <div class="w-full h-full flex items-center justify-center">
+                <i class="pi pi-car text-5xl" style="color: var(--text-muted); opacity: 0.3"></i>
+              </div>
+            }
+            <!-- Category badge -->
+            <span class="absolute top-3 left-3 text-xs px-2.5 py-1 rounded-full font-600"
+                  style="background: rgba(59,91,219,0.85); color: white; backdrop-filter: blur(8px)">
+              {{ vehicle.category }}
+            </span>
+            <!-- Year badge -->
+            <span class="absolute top-3 right-3 text-xs px-2.5 py-1 rounded-full"
+                  style="background: rgba(0,0,0,0.6); color: var(--text-muted); backdrop-filter: blur(8px)">
+              {{ vehicle.year }}
+            </span>
+          </div>
+
+          <!-- Info -->
+          <div class="p-5">
+            <h3 class="font-display font-700 text-lg mb-1" style="color: var(--text-primary)">
+              {{ vehicle.name }}
+            </h3>
+
+            <!-- Precio base -->
+            <div class="mb-4">
+              <p class="text-xs uppercase tracking-wider mb-1" style="color: var(--text-muted)">Precio base</p>
+              <p class="font-display font-700 text-2xl" style="color: var(--text-primary)">
+                {{ vehicle.base_price | currency:'MXN':'symbol':'1.0-0' }}
+              </p>
+            </div>
+
+            <!-- Botones de precio -->
+            <div class="grid grid-cols-2 gap-2">
+              <!-- Precio empleado -->
+              <button (click)="openSimulator(vehicle, 'employee')"
+                      class="flex flex-col items-start p-3 rounded-xl transition-all hover:scale-[1.02]"
+                      style="background: rgba(59,91,219,0.12); border: 1px solid rgba(59,91,219,0.3)">
+                <div class="flex items-center gap-1.5 mb-1">
+                  <i class="pi pi-id-card text-xs" style="color: var(--brand-accent)"></i>
+                  <span class="text-xs font-600 uppercase tracking-wider" style="color: var(--brand-accent)">
+                    Empleado
+                  </span>
+                </div>
+                <p class="font-display font-700 text-sm" style="color: var(--text-primary)">
+                  {{ getPriceForType(vehicle, 'employee') | currency:'MXN':'symbol':'1.0-0' }}
+                </p>
+                <p class="text-xs mt-0.5" style="color: var(--text-muted)">
+                  -{{ vehicle.employee_discount }}% desc.
+                </p>
+              </button>
+
+              <!-- Precio referido -->
+              <button (click)="openSimulator(vehicle, 'referral')"
+                      class="flex flex-col items-start p-3 rounded-xl transition-all hover:scale-[1.02]"
+                      style="background: rgba(116,192,252,0.08); border: 1px solid rgba(116,192,252,0.25)">
+                <div class="flex items-center gap-1.5 mb-1">
+                  <i class="pi pi-users text-xs" style="color: #a78bfa"></i>
+                  <span class="text-xs font-600 uppercase tracking-wider" style="color: #a78bfa">
+                    Referido
+                  </span>
+                </div>
+                <p class="font-display font-700 text-sm" style="color: var(--text-primary)">
+                  {{ getPriceForType(vehicle, 'referral') | currency:'MXN':'symbol':'1.0-0' }}
+                </p>
+                <p class="text-xs mt-0.5" style="color: var(--text-muted)">
+                  -{{ vehicle.referral_discount }}% desc.
+                </p>
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (vehicles().length === 0) {
+      <div class="text-center py-20">
+        <i class="pi pi-car text-5xl mb-4 block" style="color: var(--text-muted); opacity: 0.3"></i>
+        <p style="color: var(--text-muted)">No hay vehículos disponibles en este momento.</p>
+      </div>
+    }
+  }
+</div>
+
+<!-- Simulador Modal -->
+<app-simulator-modal
+  [visible]="showSimulator()"
+  [vehicle]="selectedVehicle()"
+  [priceType]="selectedPriceType()"
+  (visibleChange)="showSimulator.set($event)" />

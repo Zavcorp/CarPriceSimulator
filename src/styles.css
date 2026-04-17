@@ -9,17 +9,43 @@
   --color-brand-900: #1a1a2e;
   --color-brand-700: #2d2d5e;
   --color-brand-500: #4a4a8f;
+  --font-family-display: 'Space Grotesk', sans-serif;
 }
 
-/* Variables globales de la marca */
+/* Variables globales de la marca — Dark Theme Design System */
 :root {
+  /* Brand colors */
   --brand-900: #1a1a2e;
   --brand-700: #2d2d5e;
   --brand-500: #4a4a8f;
+  --brand-primary: #3b5bdb;
   --brand-accent: #4f8ef7;
+
+  /* Background surfaces */
+  --bg-base:    #0f1117;
+  --surface-1:  #13161f;
+  --surface-2:  #1a1f2e;
+  --surface-3:  #222840;
+
+  /* Text */
+  --text-primary: #e8eaf6;
+  --text-muted:   #8892b0;
+  --text-faint:   #4a5568;
+
+  /* Borders & Shadows */
+  --border-color: rgba(255,255,255,0.08);
+  --card-shadow:  0 4px 24px rgba(0,0,0,0.35);
 }
 
-/* Override suave de PrimeNG para alinear con la marca */
+/* Base page dark background */
+html, body {
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  min-height: 100%;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+
 .p-datatable .p-datatable-thead > tr > th {
   background: var(--brand-900) !important;
   color: white !important;

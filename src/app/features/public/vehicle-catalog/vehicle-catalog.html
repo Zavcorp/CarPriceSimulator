@@ -5,7 +5,7 @@
     <p class="text-sm font-500 mb-2 uppercase tracking-widest"
        style="color: var(--brand-accent)">Simulador de Precios</p>
     <h1 class="font-display text-4xl font-800 mb-3" style="color: var(--text-primary)">
-      Catálogo de Vehículos
+      Catálogo de Vehículos {{ vehicles()[0]?.month + ' ' + vehicles()[0]?.year }}
     </h1>
     <p class="text-base max-w-xl" style="color: var(--text-muted)">
       Explora nuestros modelos y simula tu precio con descuentos exclusivos para empleados y referidos.
@@ -55,7 +55,7 @@
             </span>
             <!-- Year badge -->
             <span class="absolute top-3 right-3 text-xs px-2.5 py-1 rounded-full"
-                  style="background: rgba(0,0,0,0.6); color: var(--text-muted); backdrop-filter: blur(8px)">
+                  style="background: rgb(17, 236, 17); color: black;">
               {{ vehicle.year }}
             </span>
           </div>

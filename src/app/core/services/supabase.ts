@@ -18,6 +18,10 @@ export class SupabaseService {
         auth: {
           autoRefreshToken: true,
           persistSession: true,
+          // Bypass the Web Locks API which fails in certain browser environments
+          // (iframes, cross-origin contexts, some devtools states).
+          // This no-op lock runs the callback directly without acquiring a lock.
+          lock: (_name: string, _acquireTimeout: number, fn: () => Promise<any>) => fn(),
         },
       }
     );

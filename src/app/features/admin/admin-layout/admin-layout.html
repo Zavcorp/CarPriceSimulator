@@ -1,36 +1,44 @@
-<div class="flex min-h-screen">
-  <!-- Sidebar -->
-  <aside class="w-60 flex-shrink-0 flex flex-col py-8 px-4"
-         style="background: var(--surface-1); border-right: 1px solid var(--border-color)">
+<div class="admin-layout">
 
-    <p class="text-xs uppercase tracking-widest px-3 mb-4" style="color: var(--text-muted)">
-      Administración
-    </p>
+  <!-- Mobile Top Bar (hamburger lives here on mobile) -->
+  <header class="mobile-topbar">
+    <button class="burger-btn" (click)="toggleSidebar()" aria-label="Toggle menu">
+      <i class="pi" [class.pi-bars]="!sidebarOpen()" [class.pi-times]="sidebarOpen()"></i>
+    </button>
+    <span class="mobile-title">Admin CarPS</span>
+  </header>
+
+  <!-- Backdrop overlay (mobile only) -->
+  @if (sidebarOpen()) {
+    <div class="sidebar-backdrop" (click)="closeSidebar()"></div>
+  }
+
+  <!-- Sidebar -->
+  <aside class="sidebar" [class.sidebar--open]="sidebarOpen()">
+
+    <p class="sidebar-label">Administración</p>
 
     <nav class="flex flex-col gap-1">
       <a routerLink="upload" routerLinkActive="active-nav"
-         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all hover:bg-white/5"
-         style="color: var(--text-primary)">
+         class="nav-link"
+         (click)="closeSidebar()">
         <i class="pi pi-upload text-sm"></i>
         Cargar Vehículos
       </a>
       <a routerLink="history" routerLinkActive="active-nav"
-         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all hover:bg-white/5"
-         style="color: var(--text-primary)">
+         class="nav-link"
+         (click)="closeSidebar()">
         <i class="pi pi-history text-sm"></i>
         Historial de Cargas
       </a>
     </nav>
 
-    <div class="mt-auto">
-      <div class="px-3 py-3 rounded-xl mb-3"
-           style="background: var(--surface-2)">
-        <p class="text-xs font-600" style="color: var(--text-primary)">{{ auth.user()?.email }}</p>
-        <p class="text-xs mt-0.5" style="color: var(--text-muted)">Administrador</p>
+    <div class="sidebar-footer">
+      <div class="user-card">
+        <p class="user-email">{{ auth.user()?.email }}</p>
+        <p class="user-role">Administrador</p>
       </div>
-      <button (click)="auth.signOut()"
-              class="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm transition-all hover:bg-white/5"
-              style="color: var(--text-muted)">
+      <button (click)="auth.signOut()" class="signout-btn">
         <i class="pi pi-sign-out text-sm"></i>
         Cerrar sesión
       </button>
@@ -38,15 +46,195 @@
   </aside>
 
   <!-- Content -->
-  <main class="flex-1 p-8 overflow-auto">
+  <main class="main-content">
     <router-outlet />
   </main>
+
 </div>
 
 <style>
+  /* ── Layout shell ─────────────────────────────────────────── */
+  .admin-layout {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ── Mobile top bar ───────────────────────────────────────── */
+  .mobile-topbar {
+    display: none; /* hidden on desktop */
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 56px;
+    z-index: 200;
+    align-items: center;
+    gap: 12px;
+    padding: 0 16px;
+    background: var(--surface-1);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .mobile-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .burger-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .burger-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  /* ── Backdrop ─────────────────────────────────────────────── */
+  .sidebar-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 250;
+    background: rgba(0, 0, 0, 0.55);
+    animation: fadeIn 0.2s ease;
+  }
+
+  /* ── Sidebar ──────────────────────────────────────────────── */
+  .sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 32px 16px;
+    background: var(--surface-1);
+    border-right: 1px solid var(--border-color);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .sidebar-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0 12px;
+    margin-bottom: 16px;
+    color: var(--text-muted);
+  }
+
+  /* ── Nav links ────────────────────────────────────────────── */
+  .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .nav-link:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
   .active-nav {
-    background: rgba(59,91,219,0.15) !important;
+    background: rgba(59, 91, 219, 0.15) !important;
     color: var(--brand-accent) !important;
     border-left: 2px solid var(--brand-primary);
+  }
+
+  /* ── Sidebar footer ───────────────────────────────────────── */
+  .sidebar-footer {
+    margin-top: auto;
+  }
+  .user-card {
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    background: var(--surface-2);
+  }
+  .user-email {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .user-role {
+    font-size: 0.75rem;
+    margin-top: 2px;
+    color: var(--text-muted);
+  }
+  .signout-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .signout-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  /* ── Main content ─────────────────────────────────────────── */
+  .main-content {
+    flex: 1;
+    padding: 32px;
+    overflow: auto;
+  }
+
+  /* ── Responsive — mobile ──────────────────────────────────── */
+  @media (max-width: 768px) {
+
+    .admin-layout {
+      flex-direction: column;
+    }
+
+    /* Show the top bar */
+    .mobile-topbar {
+      display: flex;
+    }
+
+    /* Show backdrop when sidebar is open */
+    .sidebar-backdrop {
+      display: block;
+    }
+
+    /* Sidebar becomes a fixed off-canvas drawer */
+    .sidebar {
+      position: fixed;
+      top: 56px; /* below the top bar */
+      left: 0;
+      bottom: 0;
+      z-index: 300;
+      transform: translateX(-100%);
+    }
+
+    .sidebar--open {
+      transform: translateX(0);
+    }
+
+    /* Push content down to clear the top bar */
+    .main-content {
+      padding: 24px 16px;
+      margin-top: 56px;
+    }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
   }
 </style>

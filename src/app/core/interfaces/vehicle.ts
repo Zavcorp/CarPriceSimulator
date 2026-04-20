@@ -5,6 +5,7 @@ export interface Vehicle {
   name: string;
   image_url: string;
   year: number;
+  month: string;            // ej: "February", "March"
   base_price: number;
   employee_discount: number;  // porcentaje (ej: 10 = 10%)
   referral_discount: number;  // porcentaje (ej: 15 = 15%)

@@ -29,4 +29,10 @@ export class AppComponent implements OnInit {
   onLoginSuccess(): void {
     this.showLoginModal.set(false);
   }
+
+  isOpen = true;
+
+  toggleMenu() {
+    this.isOpen = !this.isOpen;
+  }
 }

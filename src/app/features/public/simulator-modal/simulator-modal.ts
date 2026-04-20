@@ -49,11 +49,10 @@ export class SimulatorModal implements OnChanges {
   monthlyRows = signal<MonthlyRow[]>([]);
 
   monthOptions = [
-    { label: '6 meses', value: 6 },
     { label: '12 meses', value: 12 },
     { label: '18 meses', value: 18 },
     { label: '24 meses', value: 24 },
-    { label: '48 meses', value: 48 },
+    { label: '48 meses', value: 48 }
   ];
 
   form: FormGroup = this.fb.group({

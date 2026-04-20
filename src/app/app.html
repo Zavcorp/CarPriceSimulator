@@ -5,6 +5,14 @@
      style="background: rgba(15,17,23,0.85); backdrop-filter: blur(16px);">
   <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
 
+    <!-- Botón hamburguesa fijo -->
+    <!-- <button
+      class="p-2 text-white bg-gray-800 fixed top-2 left-2 z-50"
+      (click)="toggleMenu()">
+      ☰
+    </button> -->
+    
+    
     <!-- Logo -->
     <a routerLink="/" class="flex items-center gap-3 group">
       <div class="w-8 h-8 rounded-lg flex items-center justify-center"
@@ -12,11 +20,11 @@
         <i class="pi pi-car text-white text-sm"></i>
       </div>
       <span class="font-display font-700 text-lg tracking-tight"
-            style="color: var(--text-primary)">AutoSim</span>
+            style="color: var(--text-primary)">Auto Price Simulator Versión 1.0</span>
     </a>
 
     <!-- Right side -->
-    <div class="flex items-center gap-3">
+    <div class="flex items-center gap-3" >
       @if (auth.isAuthenticated()) {
         <span class="text-sm" style="color: var(--text-muted)">
           {{ auth.user()?.email }}

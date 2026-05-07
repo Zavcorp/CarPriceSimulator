@@ -1,0 +1,18 @@
+name: Supabase Keep Alive Car Price simulator API
+
+on:
+  schedule:
+    - cron: '0 12 */3 * *'  # cada 3 días al mediodía
+  workflow_dispatch:         # también ejecutable a mano
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase
+        run: |
+          curl -s \
+            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
+            "${{ secrets.SUPABASE_URL }}/rest/v1/?apikey=${{ secrets.SUPABASE_ANON_KEY }}" \
+            -o /dev/null -w "Status: %{http_code}\n"

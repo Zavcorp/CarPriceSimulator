@@ -11,14 +11,14 @@ jobs:
     steps:
       - name: Debug URL
         run: |
-          echo "URL length: ${#SUPABASE_URL}"
-          echo "URL value: '$SUPABASE_URL'"
+          echo "URL length: ${#SUPABASEURL}"
+          echo "URL value: '$SUPABASEURL'"
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_URL: ${{ secrets.SUPABASEURL }}
 
       - name: Ping Supabase
         run: |
           curl -v \
-            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
-            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
-            "https://uwcarjkxsgnqfnhlldua.supabase.co/rest/v1/"
+            -H "apikey: ${{ secrets.SUPABASEANONKEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASEANONKEY }}" \
+            "${{ secrets.SUPABASEURL }}/rest/v1/"

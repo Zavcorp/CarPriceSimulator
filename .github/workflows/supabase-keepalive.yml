@@ -21,4 +21,4 @@ jobs:
           curl -v \
             -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
             -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
-            "${{ secrets.SUPABASE_URL }}/rest/v1/"
+            "https://uwcarjkxsgnqfnhlldua.supabase.co/rest/v1/"

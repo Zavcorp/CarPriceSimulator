@@ -1,14 +1,21 @@
-name: Supabase Keep Alive Car Price simulator API
+name: Supabase Keep Alive
 
 on:
   schedule:
-    - cron: '0 12 */3 * *'  # cada 3 días al mediodía
-  workflow_dispatch:         # también ejecutable a mano
+    - cron: '0 12 */3 * *'
+  workflow_dispatch:
 
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
+      - name: Debug URL
+        run: |
+          echo "URL length: ${#SUPABASE_URL}"
+          echo "URL value: '$SUPABASE_URL'"
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+
       - name: Ping Supabase
         run: |
           curl -v \
